@@ -121,33 +121,16 @@ def main():
     else:
         paths = sorted(glob.glob(os.path.join(args.input, '*')))
 
+    total = 0
     for idx, path in enumerate(paths):
         imgname, extension = os.path.splitext(os.path.basename(path))
         print('Testing', idx, imgname)
 
         img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-        if len(img.shape) == 3 and img.shape[2] == 4:
-            img_mode = 'RGBA'
-        else:
-            img_mode = None
-
-        try:
-            output, _ = upsampler.enhance(img, outscale=args.outscale)
-        except RuntimeError as error:
-            print('Error', error)
-            print('If you encounter CUDA out of memory, try to set --tile with a smaller number.')
-        else:
-            if args.ext == 'auto':
-                extension = extension[1:]
-            else:
-                extension = args.ext
-            if img_mode == 'RGBA':  # RGBA images should be saved in png format
-                extension = 'png'
-            if args.suffix == '':
-                save_path = os.path.join(args.output, f'{imgname}.{extension}')
-            else:
-                save_path = os.path.join(args.output, f'{imgname}_{args.suffix}.{extension}')
-            cv2.imwrite(save_path, output)
+        output, _ = upsampler.enhance(img, outscale=args.outscale)
+        save_path = os.path.join(args.output, f'{total:06d}.png')
+        cv2.imwrite(save_path, output)
+        total += 1
 
 
 if __name__ == '__main__':
