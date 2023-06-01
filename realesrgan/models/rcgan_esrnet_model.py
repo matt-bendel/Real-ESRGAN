@@ -26,6 +26,7 @@ class rcGANESRNET(SRModel):
         self.usm_sharpener = USMSharp().cuda()  # do usm sharpening
         self.queue_size = opt.get('queue_size', 180)
         self.betastd = 1
+        self.cri_pix.update_loss_weight(self.betastd)
 
     @torch.no_grad()
     def _dequeue_and_enqueue(self):
@@ -294,3 +295,55 @@ class rcGANESRNET(SRModel):
         self.cri_pix.update_loss_weight(self.betastd)
 
         self._log_validation_metric_values(current_iter, dataset_name, tb_logger)
+
+    @master_only
+    def save_training_state(self, epoch, current_iter):
+        """Save training states during training, which will be used for
+        resuming.
+
+        Args:
+            epoch (int): Current epoch.
+            current_iter (int): Current iteration.
+        """
+        if current_iter != -1:
+            state = {'epoch': epoch, 'iter': current_iter, 'betastd': self.betastd, 'optimizers': [], 'schedulers': []}
+            for o in self.optimizers:
+                state['optimizers'].append(o.state_dict())
+            for s in self.schedulers:
+                state['schedulers'].append(s.state_dict())
+            save_filename = f'{current_iter}.state'
+            save_path = os.path.join(self.opt['path']['training_states'], save_filename)
+
+            # avoid occasional writing errors
+            retry = 3
+            while retry > 0:
+                try:
+                    torch.save(state, save_path)
+                except Exception as e:
+                    logger = get_root_logger()
+                    logger.warning(f'Save training state error: {e}, remaining retry times: {retry - 1}')
+                    time.sleep(1)
+                else:
+                    break
+                finally:
+                    retry -= 1
+            if retry == 0:
+                logger.warning(f'Still cannot save {save_path}. Just ignore it.')
+                # raise IOError(f'Cannot save {save_path}.')
+
+    def resume_training(self, resume_state):
+        """Reload the optimizers and schedulers for resumed training.
+
+        Args:
+            resume_state (dict): Resume state.
+        """
+        self.betastd = resume_state['betastd']
+        self.cri_pix.update_loss_weight(self.betastd)
+        resume_optimizers = resume_state['optimizers']
+        resume_schedulers = resume_state['schedulers']
+        assert len(resume_optimizers) == len(self.optimizers), 'Wrong lengths of optimizers'
+        assert len(resume_schedulers) == len(self.schedulers), 'Wrong lengths of schedulers'
+        for i, o in enumerate(resume_optimizers):
+            self.optimizers[i].load_state_dict(o)
+        for i, s in enumerate(resume_schedulers):
+            self.schedulers[i].load_state_dict(s)
