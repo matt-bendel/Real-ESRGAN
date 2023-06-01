@@ -35,8 +35,8 @@ datasets:
   train:
     name: DF2K+OST
     type: RealESRGANDataset
-    dataroot_gt: datasets/DF2K
-    meta_info: datasets/DF2K/meta_info/meta_info_DF2Kmultiscale+OST_sub.txt
+    dataroot_gt: /storage/sr_data/4/hr/train
+    meta_info: /storage/sr_data/4/hr/meta_info_DF2Kmultiscale+OST_sub.txt
     io_backend:
       type: disk
 
