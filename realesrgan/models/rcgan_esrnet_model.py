@@ -8,7 +8,7 @@ from basicsr.utils import DiffJPEG, USMSharp
 from basicsr.utils.img_process_util import filter2D
 from basicsr.utils.registry import MODEL_REGISTRY
 from torch.nn import functional as F
-
+from basicsr.utils.dist_util import master_only
 
 @MODEL_REGISTRY.register()
 class rcGANESRNET(SRModel):
