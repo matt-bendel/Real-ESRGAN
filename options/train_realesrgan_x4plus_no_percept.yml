@@ -1,5 +1,5 @@
 # general settings
-name: train_RealESRGANx4plus_400k_B12G4
+name: train_RealESRGANx4plus_400k_B12G4_no_percept
 model_type: RealESRGANModel
 scale: 4
 num_gpu: auto  # auto: can infer from your visible devices automatically. official: 4 GPUs
@@ -99,7 +99,7 @@ network_d:
 # path
 path:
   # use the pre-trained Real-ESRNet model
-  pretrain_network_g: /home/bendel.8/Git_Repos/Real-ESRGAN/experiments/train_RealESRNetx4plus_1000k_B12G4/models/net_g_1000000.pth
+  pretrain_network_g: /home/bendel.8/Git_Repos/sr/Real-ESRGAN/experiments/train_RealESRNetx4plus_1000k_B12G4/models/net_g_1000000.pth
   param_key_g: params_ema
   strict_load_g: true
   resume_state: ~
@@ -156,11 +156,11 @@ metrics:
 
 # logging settings
 logger:
-  print_freq: 100
-  save_checkpoint_freq: !!float 5e3
+  print_freq: 50
+  save_checkpoint_freq: !!float 5e4
   use_tb_logger: true
   wandb:
-    project: ~
+    project: sr_tests
     resume_id: ~
 
 # dist training settings
