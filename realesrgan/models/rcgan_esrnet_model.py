@@ -186,9 +186,9 @@ class rcGANESRNET(SRModel):
         self.optimizer_g.zero_grad()
         gens = []
         for z in range(self.opt.num_z_train):
-            gens.append(self.net_g(self.lq).unqueeze(1))
+            gens.append(self.net_g(self.lq))
 
-        self.output = torch.stack(gens, dim=1)
+        self.output = torch.stack(gens, dim=0)
 
         l_total = 0
         loss_dict = OrderedDict()
@@ -202,7 +202,7 @@ class rcGANESRNET(SRModel):
         l_total.backward()
         self.optimizer_g.step()
 
-        self.output = torch.mean(self.output, dim=1)
+        self.output = torch.mean(self.output, dim=0)
 
         self.log_dict = self.reduce_loss_dict(loss_dict)
 
