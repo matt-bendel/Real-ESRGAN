@@ -16,6 +16,6 @@ for idx, path in enumerate(paths):
 
     img = imread(path)
     resized_img = imresize(img, scalar_scale=0.25)
-    save_path = '/storage/sr_data/4/lr/ost_test/' . os.path.basename(path)
+    save_path = '/storage/sr_data/4/lr/ost_test/' + os.path.basename(path)
     print(save_path)
     # imageio.imwrite(save_path, resized_img)
