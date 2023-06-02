@@ -253,10 +253,10 @@ class rcGANESRNET(SRModel):
         for idx, val_data in enumerate(dataloader):
             img_name = osp.splitext(osp.basename(val_data['lq_path'][0]))[0]
             self.feed_data(val_data)
-            self.test()
 
             gens = []
             for z in range(self.opt['num_z_val']):
+                self.test()
                 visuals = self.get_current_visuals()
                 gens.append(visuals['result'])
 
