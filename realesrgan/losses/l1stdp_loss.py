@@ -35,4 +35,4 @@ class L1STDP(nn.Module):
             weight (Tensor, optional): of shape (N, C, H, W). Element-wise weights. Default: None.
         """
         return l1_loss(torch.mean(gens, dim=0), target, weight, reduction=self.reduction) - self.betastd * np.sqrt(
-            2 / (np.pi * self.args.num_z_train * (self.args.num_z_train+ 1))) * torch.std(gens, dim=0).mean()
+            2 / (np.pi * 2 * (2+ 1))) * torch.std(gens, dim=0).mean()
