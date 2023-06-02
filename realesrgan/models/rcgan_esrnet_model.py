@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import torch
+from collections import OrderedDict
 from basicsr.data.degradations import random_add_gaussian_noise_pt, random_add_poisson_noise_pt
 from basicsr.data.transforms import paired_random_crop
 from basicsr.models.sr_model import SRModel
