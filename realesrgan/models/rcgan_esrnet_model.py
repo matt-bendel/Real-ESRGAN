@@ -231,18 +231,17 @@ class rcGANESRNET(SRModel):
             self.model_ema(decay=self.ema_decay)
 
     def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
+        self.is_train = False
         dataset_name = dataloader.dataset.opt['name']
         with_metrics = self.opt['val'].get('metrics') is not None
         use_pbar = self.opt['val'].get('pbar', False)
 
-        if with_metrics:
-            if not hasattr(self, 'metric_results'):  # only execute in the first run
-                self.metric_results = {metric: 0 for metric in self.opt['val']['metrics'].keys()}
+        if not hasattr(self, 'metric_results'):  # only execute in the first run
+            self.metric_results = {metric: 0 for metric in self.opt['val']['metrics'].keys()}
             # initialize the best metric results for each dataset_name (supporting multiple validation datasets)
-            self._initialize_best_metric_results(dataset_name)
+        self._initialize_best_metric_results(dataset_name)
         # zero self.metric_results
-        if with_metrics:
-            self.metric_results = {metric: 0 for metric in self.metric_results}
+        self.metric_results = {metric: 0 for metric in self.metric_results}
 
         metric_data = dict()
         if use_pbar:
@@ -315,6 +314,7 @@ class rcGANESRNET(SRModel):
         self.cri_pix.update_loss_weight(self.betastd)
 
         self._log_validation_metric_values(current_iter, dataset_name, tb_logger)
+        self.is_train = True
 
     @master_only
     def save_training_state(self, epoch, current_iter):
