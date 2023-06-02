@@ -205,8 +205,6 @@ class rcGANESRNET(SRModel):
             gens.append(self.net_g(torch.cat([self.lq, code], dim=1)))
 
         self.output = torch.stack(gens, dim=0)
-        print(self.output.shape)
-        exit()
 
         l_total = 0
         loss_dict = OrderedDict()
