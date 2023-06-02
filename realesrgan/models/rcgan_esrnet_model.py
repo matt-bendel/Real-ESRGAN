@@ -190,7 +190,7 @@ class rcGANESRNET(SRModel):
                 self.gt_usm = self.usm_sharpener(self.gt)
 
     def test(self):
-        code = torch.randn(self.lq.shape[0], 1, self.lq.shape[-2], self.lq.shape[-2], device=self.lq.device)
+        code = torch.randn(self.lq.shape[0], 1, self.lq.shape[-2], self.lq.shape[-1], device=self.lq.device)
 
         if hasattr(self, 'net_g_ema'):
             self.net_g_ema.eval()
@@ -206,7 +206,7 @@ class rcGANESRNET(SRModel):
         self.optimizer_g.zero_grad()
         gens = []
         for z in range(self.opt['num_z_train']):
-            code = torch.randn(self.lq.shape[0], 1, self.lq.shape[-2], self.lq.shape[-2], device=self.lq.device)
+            code = torch.randn(self.lq.shape[0], 1, self.lq.shape[-2], self.lq.shape[-1], device=self.lq.device)
             gens.append(self.net_g(torch.cat([self.lq, code], dim=1)))
 
         self.output = torch.stack(gens, dim=0)
