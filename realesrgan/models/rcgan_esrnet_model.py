@@ -186,7 +186,7 @@ class rcGANESRNET(SRModel):
     def optimize_parameters(self, current_iter):
         self.optimizer_g.zero_grad()
         gens = []
-        for z in range(self.opt.num_z_train):
+        for z in range(self.opt['num_z_train']):
             gens.append(self.net_g(self.lq))
 
         self.output = torch.stack(gens, dim=0)
@@ -237,7 +237,7 @@ class rcGANESRNET(SRModel):
             self.test()
 
             gens = []
-            for z in range(self.opt.num_z_val):
+            for z in range(self.opt['num_z_train']):
                 visuals = self.get_current_visuals()
                 gens.append(visuals['result'])
 
