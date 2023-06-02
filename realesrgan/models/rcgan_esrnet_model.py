@@ -256,7 +256,7 @@ class rcGANESRNET(SRModel):
             self.test()
 
             gens = []
-            for z in range(self.opt['num_z_train']):
+            for z in range(self.opt['num_z_val']):
                 visuals = self.get_current_visuals()
                 gens.append(visuals['result'])
 
