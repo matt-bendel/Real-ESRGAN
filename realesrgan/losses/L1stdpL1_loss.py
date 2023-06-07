@@ -17,7 +17,7 @@ class L1L1STDP(nn.Module):
     """
 
     def __init__(self, loss_weight=1.0, reduction='mean'):
-        super(L1STDP, self).__init__()
+        super(L1L1STDP, self).__init__()
         if reduction not in ['none', 'mean', 'sum']:
             raise ValueError(f'Unsupported reduction mode: {reduction}. Supported ones are: {_reduction_modes}')
 
