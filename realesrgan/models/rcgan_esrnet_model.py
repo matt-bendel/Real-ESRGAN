@@ -321,7 +321,7 @@ class rcGANESRNET(SRModel):
                     gif_ims.append(iio.imread(save_img_path))
 
                 save_img_path = osp.join(self.opt['path']['visualization'], img_name,
-                                         f'{img_name}_{current_iter}_samp_gif.png')
+                                         f'{img_name}_{current_iter}_samp_gif.gif')
                 iio.mimsave(save_img_path, gif_ims, duration=0.25)
 
                 for z in range(self.opt['num_z_val']):
