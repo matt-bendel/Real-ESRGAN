@@ -1,5 +1,5 @@
 # general settings
-name: train_rcgan_esrnet
+name: train_rcgan_esrnet_per_samp_l1
 model_type: rcGANESRNET
 scale: 4
 num_gpu: auto  # auto: can infer from your visible devices automatically. official: 4 GPUs
@@ -116,7 +116,7 @@ train:
 
   # losses
   pixel_opt:
-    type: L1STDP
+    type: L1L1STDP
     loss_weight: 1.0
     reduction: mean
 

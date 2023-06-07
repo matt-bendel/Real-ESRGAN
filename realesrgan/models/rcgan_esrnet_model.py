@@ -2,6 +2,7 @@ import numpy as np
 import random
 import torch
 import os
+import imageio as iio
 from tqdm import tqdm
 from os import path as osp
 from collections import OrderedDict
@@ -230,6 +231,22 @@ class rcGANESRNET(SRModel):
         if self.ema_decay > 0:
             self.model_ema(decay=self.ema_decay)
 
+    def gif_im(self, im, ind):
+        fig = plt.figure()
+
+        plt.savefig(f'/home/bendel.8/Git_Repos/full_scale_mrigan/MRIGAN3/gif_{type}_{index - 1}.png')
+        plt.close()
+
+    def generate_gif(self, type, num):
+        images = []
+        for i in range(num):
+            images.append(iio.imread(f'/home/bendel.8/Git_Repos/full_scale_mrigan/MRIGAN3/gif_{type}_{i}.png'))
+
+        iio.mimsave(f'variation_gif_test.gif', images, duration=0.25)
+
+        for i in range(num):
+            os.remove(f'/home/bendel.8/Git_Repos/full_scale_mrigan/MRIGAN3/gif_{type}_{i}.png')
+
     def nondist_validation(self, dataloader, current_iter, tb_logger, save_img):
         self.is_train = False
         dataset_name = dataloader.dataset.opt['name']
@@ -280,6 +297,9 @@ class rcGANESRNET(SRModel):
                 P_vals = [1, 8]
                 P_avgs = [P_1_avg, P_8_avg]
                 for i in range(2):
+                    if P_vals[i] != 8:
+                        continue
+
                     if self.opt['is_train']:
                         save_img_path = osp.join(self.opt['path']['visualization'], img_name,
                                                  f'{img_name}_{current_iter}_P={P_vals[i]}.png')
@@ -291,6 +311,19 @@ class rcGANESRNET(SRModel):
                             save_img_path = osp.join(self.opt['path']['visualization'], dataset_name,
                                                      f'{img_name}_{self.opt["name"]}_P={P_vals[i]}.png')
                     imwrite(P_avgs[i], save_img_path)
+
+                gif_ims = []
+                for z in range(self.opt['num_z_val']):
+                    gens = torch.stack(gens, dim=0)
+                    save_img_path = osp.join(self.opt['path']['visualization'], img_name,
+                                             f'{img_name}_{current_iter}_samp_{z}.png')
+                    imwrite(tensor2img([gens[z]]), save_img_path)
+                    gif_ims.append(iio.imread(save_img_path))
+                    os.remove(save_img_path)
+
+                save_img_path = osp.join(self.opt['path']['visualization'], img_name,
+                                         f'{img_name}_{current_iter}_samp_gif.png')
+                iio.mimsave(save_img_path, gif_ims, duration=0.25)
 
             for name, opt_ in self.opt['val']['metrics'].items():
                 metric_data['img'] = P_1_avg if name == 'psnr_1' else P_8_avg
