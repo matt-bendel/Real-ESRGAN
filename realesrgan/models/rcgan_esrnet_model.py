@@ -319,11 +319,15 @@ class rcGANESRNET(SRModel):
                                              f'{img_name}_{current_iter}_samp_{z}.png')
                     imwrite(tensor2img([gens[z]]), save_img_path)
                     gif_ims.append(iio.imread(save_img_path))
-                    os.remove(save_img_path)
 
                 save_img_path = osp.join(self.opt['path']['visualization'], img_name,
                                          f'{img_name}_{current_iter}_samp_gif.png')
                 iio.mimsave(save_img_path, gif_ims, duration=0.25)
+
+                for z in range(self.opt['num_z_val']):
+                    save_img_path = osp.join(self.opt['path']['visualization'], img_name,
+                                             f'{img_name}_{current_iter}_samp_{z}.png')
+                    os.remove(save_img_path)
 
             for name, opt_ in self.opt['val']['metrics'].items():
                 metric_data['img'] = P_1_avg if name == 'psnr_1' else P_8_avg
