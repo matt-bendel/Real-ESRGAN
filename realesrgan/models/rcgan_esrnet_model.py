@@ -313,8 +313,8 @@ class rcGANESRNET(SRModel):
                     imwrite(P_avgs[i], save_img_path)
 
                 gif_ims = []
+                gens = torch.stack(gens, dim=0)
                 for z in range(self.opt['num_z_val']):
-                    gens = torch.stack(gens, dim=0)
                     save_img_path = osp.join(self.opt['path']['visualization'], img_name,
                                              f'{img_name}_{current_iter}_samp_{z}.png')
                     imwrite(tensor2img([gens[z]]), save_img_path)

@@ -40,4 +40,4 @@ class L1L1STDP(nn.Module):
         for z in range(gens.shape[0]):
             per_samp_l1 += l1_loss(gens[z], target, weight, reduction=self.reduction)
 
-        return per_samp_l1 / gens.shape[0] + l1_loss(torch.mean(gens, dim=0), target, weight, reduction=self.reduction) - self.betastd * self.beta_N * torch.std(gens, dim=0).mean()
+        return self.beta_1 * per_samp_l1 / gens.shape[0] + l1_loss(torch.mean(gens, dim=0), target, weight, reduction=self.reduction) - self.betastd * self.beta_N * torch.std(gens, dim=0).mean()
