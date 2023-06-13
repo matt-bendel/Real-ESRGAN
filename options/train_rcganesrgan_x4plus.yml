@@ -167,15 +167,15 @@ val:
   val_freq: !!float 5e3
   save_img: True
 
-metrics:
-   psnr_1: # metric name
-     type: calculate_psnr
-     crop_border: 4
-     test_y_channel: false
-   psnr_8: # metric name
-     type: calculate_psnr
-     crop_border: 4
-     test_y_channel: false
+  metrics:
+     psnr_1: # metric name
+       type: calculate_psnr
+       crop_border: 4
+       test_y_channel: false
+     psnr_8: # metric name
+       type: calculate_psnr
+       crop_border: 4
+       test_y_channel: false
 
 # logging settings
 logger:
