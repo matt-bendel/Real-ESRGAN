@@ -40,6 +40,9 @@ def test_pipeline(root_path):
     model = build_model(opt)
     model.is_train = False
 
+    current_count = 0
+    count = 5
+
     for test_loader in test_loaders:
         for idx, val_data in enumerate(test_loader):
             img_name = osp.splitext(osp.basename(val_data['lq_path'][0]))[0]
@@ -51,80 +54,41 @@ def test_pipeline(root_path):
                 visuals = model.get_current_visuals()
                 gens.append(visuals['result'])
 
-            P_8_avg = torch.mean(torch.stack(gens, dim=0), dim=0)
-            P_1_avg = visuals['result']
+            gens = torch.stack(gens, dim=0)
 
-            P_8_avg = tensor2img([P_8_avg])
-            P_1_avg = tensor2img([P_1_avg])
+            for j in range(y.shape[0]):
+                if current_count >= count:
+                    exit()
 
-            if 'gt' in visuals:
-                gt_img = tensor2img([visuals['gt']])
-                metric_data['img2'] = gt_img
-                del self.gt
+                single_samps = np.zeros((num_code, 3, 256, 256))
+                np_avg = torch.mean(gens[:, j, :, :, :], dim=0).cpu().numpy()
+                for z in range(num_code):
+                    single_samps[z, :, :, :] = gens[z, j, :, :, :].cpu().numpy()
 
-            # tentative for out of GPU memory
-            del self.lq
-            del self.output
-            torch.cuda.empty_cache()
+                single_samps = single_samps - np_avg[None, :, :, :]
 
-            if save_img:
-                P_vals = [1, 8]
-                P_avgs = [P_1_avg, P_8_avg]
-                for i in range(2):
-                    if P_vals[i] != 8:
-                        continue
+                cov_mat = np.zeros((num_code, 3*np_avg.shape[-1] * np_avg.shape[-2]))
 
-                    if self.opt['is_train']:
-                        save_img_path = osp.join(self.opt['path']['visualization'], img_name,
-                                                 f'{img_name}_{current_iter}_P={P_vals[i]}.png')
-                    else:
-                        if self.opt['val']['suffix']:
-                            save_img_path = osp.join(self.opt['path']['visualization'], dataset_name,
-                                                     f'{img_name}_{self.opt["val"]["suffix"]}_P={P_vals[i]}.png')
-                        else:
-                            save_img_path = osp.join(self.opt['path']['visualization'], dataset_name,
-                                                     f'{img_name}_{self.opt["name"]}_P={P_vals[i]}.png')
-                    imwrite(P_avgs[i], save_img_path)
+                for z in range(num_code):
+                    cov_mat[z, :] = single_samps[z].flatten()
 
-                gif_ims = []
-                gens = torch.stack(gens, dim=0)
-                for z in range(self.opt['num_z_val']):
-                    save_img_path = osp.join(self.opt['path']['visualization'], img_name,
-                                             f'{img_name}_{current_iter}_samp_{z}.png')
-                    imwrite(tensor2img([gens[z]]), save_img_path)
-                    gif_ims.append(iio.imread(save_img_path))
+                u, s, vh = np.linalg.svd(cov_mat, full_matrices=False)
 
-                save_img_path = osp.join(self.opt['path']['visualization'], img_name,
-                                         f'{img_name}_{current_iter}_samp_gif.gif')
-                iio.mimsave(save_img_path, gif_ims, duration=0.25)
+                plt.figure()
+                plt.scatter(range(len(s)), sklearn.preprocessing.normalize(s.reshape((1, -1))))
+                plt.savefig(f'sv_test/test_sv_{current_count}.png')
+                plt.close()
 
-                for z in range(self.opt['num_z_val']):
-                    save_img_path = osp.join(self.opt['path']['visualization'], img_name,
-                                             f'{img_name}_{current_iter}_samp_{z}.png')
-                    os.remove(save_img_path)
+                for l in range(5):
+                    v_re = vh[l].reshape((3, 256, 256))
+                    v_re = (v_re - np.min(v_re)) / (np.max(v_re) - np.min(v_re))
+                    plt.figure()
+                    plt.imshow(v_re.transpose(1, 2, 0))
+                    plt.savefig(f'sv_test/test_sv_v_{current_count}_{l}.png')
+                    plt.close()
 
-            for name, opt_ in self.opt['val']['metrics'].items():
-                metric_data['img'] = P_1_avg if name == 'psnr_1' else P_8_avg
+                current_count += 1
 
-                self.metric_results[name] += calculate_metric(metric_data, opt_)
-            if use_pbar:
-                pbar.update(1)
-                pbar.set_description(f'Test {img_name}')
-        if use_pbar:
-            pbar.close()
-
-        for metric in self.metric_results.keys():
-            self.metric_results[metric] /= (idx + 1)
-            self._update_best_metric_result(dataset_name, metric, self.metric_results[metric], current_iter)
-
-        psnr_8 = self.metric_results['psnr_8']
-        psnr_1 = self.metric_results['psnr_1']
-
-        mu_0 = 2e-2
-        self.betastd += mu_0 * ((psnr_1 + 2.5) - psnr_8)
-        self.cri_pix.update_loss_weight(self.betastd)
-
-        self._log_validation_metric_values(current_iter, dataset_name, tb_logger)
 
 if __name__ == '__main__':
     root_path = osp.abspath(osp.join(__file__, osp.pardir, osp.pardir))
