@@ -2,6 +2,7 @@
 import logging
 import torch
 import os.path as osp
+import numpy as np
 
 import realesrgan.archs
 import realesrgan.data
