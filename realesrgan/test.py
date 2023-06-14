@@ -57,11 +57,11 @@ def test_pipeline(root_path):
 
             gens = torch.stack(gens, dim=0)
 
-            for j in range(y.shape[0]):
+            for j in range(gens.shape[1]):
                 if current_count >= count:
                     exit()
 
-                single_samps = np.zeros((num_code, 3, 256, 256))
+                single_samps = np.zeros((num_code, 3, gens[:, j, :, :, :].shape[-2], gens[:, j, :, :, :].shape[-1]))
                 np_avg = torch.mean(gens[:, j, :, :, :], dim=0).cpu().numpy()
                 for z in range(num_code):
                     single_samps[z, :, :, :] = gens[z, j, :, :, :].cpu().numpy()
@@ -81,7 +81,7 @@ def test_pipeline(root_path):
                 plt.close()
 
                 for l in range(5):
-                    v_re = vh[l].reshape((3, 256, 256))
+                    v_re = vh[l].reshape((3, gens[:, j, :, :, :].shape[-2], gens[:, j, :, :, :].shape[-1]))
                     v_re = (v_re - np.min(v_re)) / (np.max(v_re) - np.min(v_re))
                     plt.figure()
                     plt.imshow(v_re.transpose(1, 2, 0))
