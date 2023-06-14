@@ -41,6 +41,7 @@ def test_pipeline(root_path):
     model.is_train = False
 
     current_count = 0
+    num_code = 128
     count = 5
 
     for test_loader in test_loaders:
@@ -49,7 +50,7 @@ def test_pipeline(root_path):
             model.feed_data(val_data)
 
             gens = []
-            for z in range(128):
+            for z in range(num_code):
                 model.test()
                 visuals = model.get_current_visuals()
                 gens.append(visuals['result'])
