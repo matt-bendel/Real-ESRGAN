@@ -33,7 +33,9 @@ class rcGANESRNET(SRModel):
         self.usm_sharpener = USMSharp().cuda()  # do usm sharpening
         self.queue_size = opt.get('queue_size', 180)
         self.betastd = 1
-        self.cri_pix.update_loss_weight(self.betastd)
+
+        if hasattr(self, 'cri_pix'):
+            self.cri_pix.update_loss_weight(self.betastd)
 
     @torch.no_grad()
     def _dequeue_and_enqueue(self):
