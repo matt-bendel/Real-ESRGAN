@@ -8,6 +8,7 @@ import realesrgan.archs
 import realesrgan.data
 import realesrgan.models
 import matplotlib.pyplot as plt
+import sklearn.preprocessing
 
 from basicsr.data import build_dataloader, build_dataset
 from basicsr.models import build_model
