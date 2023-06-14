@@ -24,7 +24,7 @@ datasets:
 # network structures
 network_g:
   type: RRDBNet
-  num_in_ch: 3
+  num_in_ch: 4
   num_out_ch: 3
   num_feat: 64
   num_block: 23
@@ -32,7 +32,7 @@ network_g:
 
 # path
 path:
-  pretrain_network_g: /home/bendel.8/Git_Repos/Real-ESRGAN/experiments/train_rcgan_esrnet/models/net_g_700000.pth
+  pretrain_network_g: /home/bendel.8/Git_Repos/Real-ESRGAN/realesrgan/experiments/train_rcgan_esrnet/models/net_g_700000.pth
   strict_load_g: true
 
 # validation settings
