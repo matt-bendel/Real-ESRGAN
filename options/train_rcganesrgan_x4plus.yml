@@ -112,12 +112,12 @@ train:
   ema_decay: 0.999
   optim_g:
     type: Adam
-    lr: !!float 1e-4
+    lr: !!float 2e-4
     weight_decay: 0
     betas: [0.9, 0.99]
   optim_d:
     type: Adam
-    lr: !!float 1e-4
+    lr: !!float 2e-4
     weight_decay: 0
     betas: [0.9, 0.99]
 
@@ -146,7 +146,7 @@ train:
       'conv5_4': 1
     vgg_type: vgg19
     use_input_norm: true
-    perceptual_weight: !!float 1.0
+    perceptual_weight: !!float 5e-1
     style_weight: 0
     range_norm: false
     criterion: l1
