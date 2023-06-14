@@ -32,7 +32,7 @@ network_g:
 
 # path
 path:
-  pretrain_network_g: /home/bendel.8/Git_Repos/sr/Real-ESRGAN/realesrgan/experiments/train_rcgan_esrnet/models/net_g_700000.pth
+  pretrain_network_g: /home/bendel.8/Git_Repos/sr/Real-ESRGAN/experiments/train_rcgan_esrnet/models/net_g_700000.pth
   strict_load_g: true
 
 # validation settings
