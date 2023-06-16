@@ -184,7 +184,7 @@ logger:
   use_tb_logger: true
   wandb:
     project: sr_tests
-    resume_id: ~
+    resume_id: l7v2uzng
 
 # dist training settings
 dist_params:
