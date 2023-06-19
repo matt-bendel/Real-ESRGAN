@@ -448,7 +448,7 @@ class rcGANESRGAN(SRGANModel):
         Args:
             resume_state (dict): Resume state.
         """
-        self.betastd = resume_state['betastd']
+        self.betastd = resume_state['betastd'] - 1
         print(self.betastd)
         self.cri_pix.update_loss_weight(self.betastd)
         resume_optimizers = resume_state['optimizers']
