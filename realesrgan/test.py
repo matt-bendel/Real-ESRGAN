@@ -80,7 +80,7 @@ def test_pipeline(root_path):
 
                 plt.figure()
                 plt.scatter(range(len(s)), sklearn.preprocessing.normalize(s.reshape((1, -1))))
-                plt.savefig(f'sv_test/test_sv_{current_count}.png')
+                plt.savefig(f'sv_test/test_sv_415_{current_count}.png')
                 plt.close()
 
                 for l in range(5):
@@ -88,7 +88,7 @@ def test_pipeline(root_path):
                     v_re = (v_re - np.min(v_re)) / (np.max(v_re) - np.min(v_re))
                     plt.figure()
                     plt.imshow(v_re.transpose(1, 2, 0))
-                    plt.savefig(f'sv_test/test_sv_v_{current_count}_{l}.png')
+                    plt.savefig(f'sv_test/test_sv_v_415_{current_count}_{l}.png')
                     plt.close()
 
                 current_count += 1
