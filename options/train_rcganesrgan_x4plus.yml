@@ -94,9 +94,10 @@ network_g:
   num_grow_ch: 32
 
 network_d:
-  type: VGGStyleDiscriminatorNoBN
+  type: UNetDiscriminatorSN
   num_in_ch: 3
   num_feat: 64
+  skip_connection: True
 
 # path
 path:
