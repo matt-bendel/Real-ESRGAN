@@ -240,11 +240,11 @@ class rcGANESRGAN(SRGANModel):
         if hasattr(self, 'net_g_ema'):
             self.net_g_ema.eval()
             with torch.no_grad():
-                self.output = self.net_g_ema(self.lq, code)
+                self.output = self.net_g_ema(torch.cat([self.lq, code], dim=1))
         else:
             self.net_g.eval()
             with torch.no_grad():
-                self.output = self.net_g(self.lq, code)
+                self.output = self.net_g(torch.cat([self.lq, code], dim=1))
             self.net_g.train()
 
     def gif_im(self, im, ind):
@@ -283,7 +283,7 @@ class rcGANESRGAN(SRGANModel):
         gens = []
         for z in range(self.opt['num_z_train']):
             code = torch.randn(self.lq.shape[0], 1, self.lq.shape[-2], self.lq.shape[-1], device=self.lq.device)
-            gens.append(self.net_g(self.lq, code))
+            gens.append(self.net_g(torch.cat([self.lq, code], dim=1)))
 
         self.output = torch.stack(gens, dim=0)
 
@@ -313,10 +313,6 @@ class rcGANESRGAN(SRGANModel):
 
             l_g_total += l_g_gan
             loss_dict['l_g_gan'] = l_g_gan
-
-            for n, p in self.net_g.named_parameters():
-                if p.grad is None:
-                    print(f'{n} has no grad')
 
             l_g_total.backward()
             self.optimizer_g.step()
