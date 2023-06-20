@@ -325,7 +325,7 @@ class rcGANESRGAN(SRGANModel):
         loss_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
         l_d_fake.backward()
         # GP
-        batch_size = real_data.size(0)
+        batch_size = gan_gt.size(0)
         alpha = torch.rand(batch_size, 1, 1, 1).to(gan_gt.device)
 
         # interpolate between real_data and fake_data
