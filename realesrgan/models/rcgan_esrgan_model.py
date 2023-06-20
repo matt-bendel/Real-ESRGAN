@@ -200,11 +200,11 @@ class rcGANESRGAN(SRGANModel):
         if hasattr(self, 'net_g_ema'):
             self.net_g_ema.eval()
             with torch.no_grad():
-                self.output = self.net_g_ema(torch.cat([self.lq, code], dim=1))
+                self.output = self.net_g_ema(self.lq, code)
         else:
             self.net_g.eval()
             with torch.no_grad():
-                self.output = self.net_g(torch.cat([self.lq, code], dim=1))
+                self.output = self.net_g(self.lq, code)
             self.net_g.train()
 
     def gif_im(self, im, ind):
@@ -243,7 +243,7 @@ class rcGANESRGAN(SRGANModel):
         gens = []
         for z in range(self.opt['num_z_train']):
             code = torch.randn(self.lq.shape[0], 1, self.lq.shape[-2], self.lq.shape[-1], device=self.lq.device)
-            gens.append(self.net_g(torch.cat([self.lq, code], dim=1)))
+            gens.append(self.net_g(self.lq, code))
 
         self.output = torch.stack(gens, dim=0)
 

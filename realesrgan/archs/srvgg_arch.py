@@ -57,13 +57,13 @@ class SRVGGNetCompact(nn.Module):
         # upsample
         self.upsampler = nn.PixelShuffle(upscale)
 
-    def forward(self, x):
-        out = x
+    def forward(self, x, noise):
+        out = torch.cat([x, noise], dim=1)
         for i in range(0, len(self.body)):
             out = self.body[i](out)
 
         out = self.upsampler(out)
         # add the nearest upsampled image, so that the network learns the residual
-        base = F.interpolate(x[:, 0:3, :, :], scale_factor=self.upscale, mode='nearest')
+        base = F.interpolate(x, scale_factor=self.upscale, mode='nearest')
         out += base
         return out
