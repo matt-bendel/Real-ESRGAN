@@ -1,5 +1,6 @@
 from basicsr.utils.registry import ARCH_REGISTRY
 from torch import nn as nn
+import torch
 from torch.nn import functional as F
 
 
