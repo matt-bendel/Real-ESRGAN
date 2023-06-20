@@ -64,6 +64,6 @@ class SRVGGNetCompact(nn.Module):
 
         out = self.upsampler(out)
         # add the nearest upsampled image, so that the network learns the residual
-        base = F.interpolate(x, scale_factor=self.upscale, mode='nearest')
+        base = F.interpolate(x[:, 0:3, :, :], scale_factor=self.upscale, mode='nearest')
         out += base
         return out
