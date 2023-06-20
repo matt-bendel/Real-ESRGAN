@@ -268,7 +268,7 @@ class rcGANESRGAN(SRGANModel):
             # gan loss
             l_g_gan = 0
             for z in range(self.output.shape[0]):
-                fake_g_pred = self.net_d(self.output[z, :, :, :, :])
+                fake_g_pred = self.net_d(self.output[z, :, :, :, :].clone())
                 l_g_gan += 1 / self.opt['num_z_train'] * self.cri_gan(fake_g_pred, True, is_disc=False)
 
             l_g_total += l_g_gan
