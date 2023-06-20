@@ -17,7 +17,7 @@ from basicsr.utils import get_root_logger, imwrite, tensor2img
 from collections import OrderedDict
 from torch.nn import functional as F
 from basicsr.utils.dist_util import master_only
-
+from basicsr.losses.gan_loss import gradient_penalty_loss
 
 @MODEL_REGISTRY.register()
 class rcGANESRGAN(SRGANModel):
@@ -256,15 +256,15 @@ class rcGANESRGAN(SRGANModel):
                 l_g_total += l_g_pix
                 loss_dict['l_g_pix'] = l_g_pix
             # perceptual loss
-            if self.cri_perceptual:
-                l_g_p = 0
-                for z in range(self.output.shape[0]):
-                    l_g_percep, l_g_style = self.cri_perceptual(self.output[z, :, :, :, :], percep_gt)
-                    if l_g_percep is not None:
-                        l_g_p += 1 / self.opt['num_z_train'] * l_g_percep
-
-                loss_dict['l_g_percep'] = l_g_p
-                l_g_total += l_g_p
+            # if self.cri_perceptual:
+            #     l_g_p = 0
+            #     for z in range(self.output.shape[0]):
+            #         l_g_percep, l_g_style = self.cri_perceptual(self.output[z, :, :, :, :], percep_gt)
+            #         if l_g_percep is not None:
+            #             l_g_p += 1 / self.opt['num_z_train'] * l_g_percep
+            #
+            #     loss_dict['l_g_percep'] = l_g_p
+            #     l_g_total += l_g_p
             # gan loss
             l_g_gan = 0
             for z in range(self.output.shape[0]):
@@ -294,6 +294,11 @@ class rcGANESRGAN(SRGANModel):
         loss_dict['l_d_fake'] = l_d_fake
         loss_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
         l_d_fake.backward()
+        # GP
+        l_d_gp = 10 * gradient_penalty_loss(self.net_d, gan_gt, self.output[0, :, :, :, :].detach().clone())
+        loss_dict['l_d_gp'] = l_d_gp
+        l_d_gp.backward()
+
         self.optimizer_d.step()
 
         if self.ema_decay > 0:

@@ -102,7 +102,7 @@ network_d:
 # path
 path:
   # use the pre-trained Real-ESRNet model
-  pretrain_network_g: /home/bendel.8/Git_Repos/sr/Real-ESRGAN/experiments/train_rcgan_esrnet/models/net_g_700000.pth
+  pretrain_network_g: ~ #/home/bendel.8/Git_Repos/sr/Real-ESRGAN/experiments/train_rcgan_esrnet/models/net_g_700000.pth
   param_key_g: params_ema
   strict_load_g: true
   resume_state: ~
@@ -131,33 +131,32 @@ train:
 
   # losses
   pixel_opt:
-    type: L1L1STDP
+    type: L1STDP
     loss_weight: 1.0
     reduction: mean
   # perceptual loss (content and style losses)
-  perceptual_opt:
-    type: PerceptualLoss
-    layer_weights:
-      # before relu
-      'conv1_2': 0.1
-      'conv2_2': 0.1
-      'conv3_4': 1
-      'conv4_4': 1
-      'conv5_4': 1
-    vgg_type: vgg19
-    use_input_norm: true
-    perceptual_weight: !!float 5e-1
-    style_weight: 0
-    range_norm: false
-    criterion: l1
+#  perceptual_opt:
+#    type: PerceptualLoss
+#    layer_weights:
+#      # before relu
+#      'conv1_2': 0.1
+#      'conv2_2': 0.1
+#      'conv3_4': 1
+#      'conv4_4': 1
+#      'conv5_4': 1
+#    vgg_type: vgg19
+#    use_input_norm: true
+#    perceptual_weight: !!float 5e-1
+#    style_weight: 0
+#    range_norm: false
+#    criterion: l1
   # gan loss
   gan_opt:
     type: GANLoss
-    gan_type: vanilla
-    real_label_val: 1.0
-    fake_label_val: 0.0
+    gan_type: wgan
     loss_weight: !!float 1e-1
 
+  r1_reg_weight: 10
   net_d_iters: 1
   net_d_init_iters: 0
 

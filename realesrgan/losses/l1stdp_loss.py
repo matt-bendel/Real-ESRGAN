@@ -21,7 +21,8 @@ class L1STDP(nn.Module):
         if reduction not in ['none', 'mean', 'sum']:
             raise ValueError(f'Unsupported reduction mode: {reduction}. Supported ones are: {_reduction_modes}')
 
-        self.betastd = loss_weight
+        self.betastd = 1
+        self.loss_weight = loss_weight
         self.reduction = reduction
 
     def update_loss_weight(self, new_weight):
@@ -34,5 +35,5 @@ class L1STDP(nn.Module):
             target (Tensor): of shape (N, C, H, W). Ground truth tensor.
             weight (Tensor, optional): of shape (N, C, H, W). Element-wise weights. Default: None.
         """
-        return l1_loss(torch.mean(gens, dim=0), target, weight, reduction=self.reduction) - self.betastd * np.sqrt(
-            2 / (np.pi * 2 * (2+ 1))) * torch.std(gens, dim=0).mean()
+        return self.loss_weight * (l1_loss(torch.mean(gens, dim=0), target, weight, reduction=self.reduction) - self.betastd * np.sqrt(
+            2 / (np.pi * 2 * (2+ 1))) * torch.std(gens, dim=0).mean())

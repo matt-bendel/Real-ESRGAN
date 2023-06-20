@@ -22,7 +22,8 @@ class L1L1STDP(nn.Module):
             raise ValueError(f'Unsupported reduction mode: {reduction}. Supported ones are: {_reduction_modes}')
 
         self.betastd = 1
-        self.beta_1 = loss_weight
+        self.beta_1 = 1
+        self.loss_weight = loss_weight
         self.beta_N = self.beta_1 * np.sqrt(1 / np.pi) + np.sqrt(2 / (np.pi * 2 * (2+ 1)))
         self.reduction = reduction
 
@@ -40,4 +41,4 @@ class L1L1STDP(nn.Module):
         for z in range(gens.shape[0]):
             per_samp_l1 += l1_loss(gens[z], target, weight, reduction=self.reduction)
 
-        return self.beta_1 * per_samp_l1 / gens.shape[0] + l1_loss(torch.mean(gens, dim=0), target, weight, reduction=self.reduction) - self.betastd * self.beta_N * torch.std(gens, dim=0).mean()
+        return self.beta_1 * per_samp_l1 / gens.shape[0] + self.loss_weight * (l1_loss(torch.mean(gens, dim=0), target, weight, reduction=self.reduction) - self.betastd * self.beta_N * torch.std(gens, dim=0).mean())
