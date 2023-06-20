@@ -153,7 +153,7 @@ train:
   # gan loss
   gan_opt:
     type: GANLoss
-    gan_type: vanilla
+    gan_type: wgan
     real_label_val: 1.0
     fake_label_val: 0.0
     loss_weight: !!float 1e-1
