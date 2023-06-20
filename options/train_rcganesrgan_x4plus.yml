@@ -93,7 +93,7 @@ network_g:
   num_conv: 16
 
 network_d:
-  type: VGGStyleDiscriminator
+  type: VGGStyleDiscriminatorNoBN
   num_in_ch: 3
   num_feat: 64
 
