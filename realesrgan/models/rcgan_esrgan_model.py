@@ -297,7 +297,7 @@ class rcGANESRGAN(SRGANModel):
         loss_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
         l_d_fake.backward()
         # GP
-        l_d_gp = 10 * gradient_penalty_loss(self.net_d, gan_gt, self.output[0, :, :, :, :].detach().clone())
+        l_d_gp = 10 * gradient_penalty_loss(self.net_d, gan_gt, self.output[0, :, :, :, :].clone())
         loss_dict['l_d_gp'] = l_d_gp
         l_d_gp.backward()
 
