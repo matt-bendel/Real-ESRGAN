@@ -33,7 +33,7 @@ poisson_scale_range2: [0.05, 2.5]
 gray_noise_prob2: 0.4
 jpeg_range2: [30, 95]
 
-gt_size: 256
+gt_size: 128
 queue_size: 180
 
 # dataset and data loader settings
