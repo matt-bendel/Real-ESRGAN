@@ -76,8 +76,6 @@ class rcGANESRGAN(SRGANModel):
         if hasattr(self, 'cri_pix'):
             self.cri_pix.update_loss_weight(self.betastd)
 
-        torch.autograd.set_detect_anomaly(True)
-
     @torch.no_grad()
     def _dequeue_and_enqueue(self):
         """It is the training pair pool for increasing the diversity in a batch.
@@ -332,7 +330,7 @@ class rcGANESRGAN(SRGANModel):
         interpolates = alpha * gan_gt + (1. - alpha) * self.output[0, :, :, :, :].detach().clone()
         interpolates = autograd.Variable(interpolates, requires_grad=True)
 
-        disc_interpolates = self.net_g(interpolates)
+        disc_interpolates = self.net_d(interpolates)
         gradients = autograd.grad(
             outputs=disc_interpolates,
             inputs=interpolates,
