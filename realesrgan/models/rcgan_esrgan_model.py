@@ -336,15 +336,15 @@ class rcGANESRGAN(SRGANModel):
         gradients = autograd.grad(
             outputs=disc_interpolates,
             inputs=interpolates,
-            grad_outputs=torch.one(disc_interpolates.size()).to(gan_gt.device),
+            grad_outputs=torch.ones(disc_interpolates.size()).to(gan_gt.device),
             create_graph=True,
             retain_graph=True,
             only_inputs=True)[0]
 
         gradients = gradients.view(gradients.size(0), -1)
-        gradients_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean()
-        l_d_total += 10 * gradients_penalty + interpolates[:, 0, 0, 0].mean()*0
+        l_d_gp = 10 * ((gradients.norm(2, dim=1) - 1) ** 2).mean() + interpolates[:, 0, 0, 0].mean()*0
         loss_dict['l_d_gp'] = l_d_gp
+        l_d_total += l_d_gp
         l_d_total.backward()
 
         self.optimizer_d.step()
