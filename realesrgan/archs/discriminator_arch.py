@@ -15,7 +15,7 @@ class VGGStyleDiscriminatorNoBN(nn.Module):
     """
 
     def __init__(self, num_in_ch, num_feat, input_size=128):
-        super(VGGStyleDiscriminator, self).__init__()
+        super(VGGStyleDiscriminatorNoBN, self).__init__()
         self.input_size = input_size
         assert self.input_size == 128 or self.input_size == 256, (
             f'input size must be 128 or 256, but received {input_size}')
