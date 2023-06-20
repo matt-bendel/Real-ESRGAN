@@ -327,7 +327,7 @@ class rcGANESRGAN(SRGANModel):
         alpha = torch.rand(batch_size, 1, 1, 1).to(gan_gt.device)
 
         # interpolate between real_data and fake_data
-        interpolates = (alpha * gan_gt.data + (1. - alpha) * self.output[0, :, :, :, :].data.detach().clone()).requires_grad_(True)
+        interpolates = (alpha * gan_gt.data + (1. - alpha) * self.output[0, :, :, :, :].data).requires_grad_(True)
 
         disc_interpolates = self.net_d(interpolates)
         gradients = autograd.grad(
