@@ -36,8 +36,8 @@ class VGGStyleDiscriminatorNoBN(nn.Module):
         self.conv4_0 = norm(nn.Conv2d(num_feat * 8, num_feat * 8, 3, 1, 1, bias=False))
         self.conv4_1 = norm(nn.Conv2d(num_feat * 8, num_feat * 8, 4, 2, 1, bias=False))
 
-        self.linear1 = nn.Linear(num_feat * 8 * 4 * 4, 100)
-        self.linear2 = nn.Linear(100, 1)
+        self.linear1 = nn.Linear(num_feat * 8 * 4 * 4, 512)
+        self.linear2 = nn.Linear(512, 1)
 
         # activation function
         self.lrelu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
