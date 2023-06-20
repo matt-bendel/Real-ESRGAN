@@ -36,10 +36,6 @@ class VGGStyleDiscriminatorNoBN(nn.Module):
         self.conv4_0 = norm(nn.Conv2d(num_feat * 8, num_feat * 8, 3, 1, 1, bias=False))
         self.conv4_1 = norm(nn.Conv2d(num_feat * 8, num_feat * 8, 4, 2, 1, bias=False))
 
-        if self.input_size == 256:
-            self.conv5_0 = norm(nn.Conv2d(num_feat * 8, num_feat * 8, 3, 1, 1, bias=False))
-            self.conv5_1 = norm(nn.Conv2d(num_feat * 8, num_feat * 8, 4, 2, 1, bias=False))
-
         self.linear1 = nn.Linear(num_feat * 8 * 4 * 4, 100)
         self.linear2 = nn.Linear(100, 1)
 

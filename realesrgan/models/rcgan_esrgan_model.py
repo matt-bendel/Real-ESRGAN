@@ -314,6 +314,10 @@ class rcGANESRGAN(SRGANModel):
             l_g_total += l_g_gan
             loss_dict['l_g_gan'] = l_g_gan
 
+            for n, p in self.net_g.named_parameters():
+                if p.grad is None:
+                    print(f'{n} has no grad')
+
             l_g_total.backward()
             self.optimizer_g.step()
 
