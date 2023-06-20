@@ -310,18 +310,19 @@ class rcGANESRGAN(SRGANModel):
             p.requires_grad = True
 
         self.optimizer_d.zero_grad()
+        l_d_total = 0
         # real
         real_d_pred = self.net_d(gan_gt)
         l_d_real = self.cri_gan(real_d_pred, True, is_disc=True)
         loss_dict['l_d_real'] = l_d_real
         loss_dict['out_d_real'] = torch.mean(real_d_pred.detach())
-        l_d_real.backward()
+        l_d_total += l_d_real
         # fake
         fake_d_pred = self.net_d(self.output[0, :, :, :, :].detach().clone())  # clone for pt1.9
         l_d_fake = self.cri_gan(fake_d_pred, False, is_disc=True)
         loss_dict['l_d_fake'] = l_d_fake
         loss_dict['out_d_fake'] = torch.mean(fake_d_pred.detach())
-        l_d_fake.backward()
+        l_d_total += l_d_fake
         # GP
         batch_size = gan_gt.size(0)
         alpha = torch.rand(batch_size, 1, 1, 1).to(gan_gt.device)
@@ -331,21 +332,20 @@ class rcGANESRGAN(SRGANModel):
         interpolates = autograd.Variable(interpolates, requires_grad=True)
 
         disc_interpolates = self.net_d(interpolates)
-        fake = torch.FloatTensor(disc_interpolates.shape[0], 1).fill_(1.0).to(gan_gt.device)
 
         gradients = autograd.grad(
             outputs=disc_interpolates,
             inputs=interpolates,
-            grad_outputs=fake,
+            grad_outputs=torch.one(disc_interpolates.size()).to(gan_gt.device),
             create_graph=True,
             retain_graph=True,
             only_inputs=True)[0]
 
         gradients = gradients.view(gradients.size(0), -1)
         gradients_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean()
-        l_d_gp = 10 * gradients_penalty + interpolates[:, 0, 0, 0].mean()*0
+        l_d_total += 10 * gradients_penalty + interpolates[:, 0, 0, 0].mean()*0
         loss_dict['l_d_gp'] = l_d_gp
-        l_d_gp.backward()
+        l_d_total.backward()
 
         self.optimizer_d.step()
 
