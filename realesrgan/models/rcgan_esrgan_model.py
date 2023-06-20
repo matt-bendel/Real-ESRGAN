@@ -330,10 +330,13 @@ class rcGANESRGAN(SRGANModel):
         interpolates = (alpha * gan_gt.data + (1. - alpha) * self.output[0, :, :, :, :].data).requires_grad_(True)
 
         disc_interpolates = self.net_d(interpolates)
+        fake = torch.FloatTensor(disc_interpolates.shape[0], 1).fill_(1.0).to(
+            self.device)
+
         gradients = autograd.grad(
             outputs=disc_interpolates,
             inputs=interpolates,
-            grad_outputs=torch.ones_like(disc_interpolates),
+            grad_outputs=fake,
             create_graph=True,
             retain_graph=True,
             only_inputs=True)[0]
