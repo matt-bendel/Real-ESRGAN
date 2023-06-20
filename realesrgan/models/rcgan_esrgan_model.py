@@ -332,7 +332,7 @@ class rcGANESRGAN(SRGANModel):
         interpolates = alpha * gan_gt + (1. - alpha) * self.output[0, :, :, :, :].detach().clone()
         interpolates = autograd.Variable(interpolates, requires_grad=True)
 
-        disc_interpolates = discriminator(interpolates)
+        disc_interpolates = self.net_g(interpolates)
         gradients = autograd.grad(
             outputs=disc_interpolates,
             inputs=interpolates,
