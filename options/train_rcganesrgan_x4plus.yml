@@ -86,18 +86,16 @@ datasets:
 
 # network structures
 network_g:
-  type: RRDBNet
+  type: SRVGGNetCompact
   num_in_ch: 4
   num_out_ch: 3
   num_feat: 64
-  num_block: 23
-  num_grow_ch: 32
+  num_conv: 16
 
 network_d:
-  type: UNetDiscriminatorSN
+  type: VGGStyleDiscriminator
   num_in_ch: 3
   num_feat: 64
-  skip_connection: True
 
 # path
 path:
