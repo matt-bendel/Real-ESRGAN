@@ -17,6 +17,7 @@ from basicsr.utils import get_root_logger, imwrite, tensor2img
 from collections import OrderedDict
 from torch.nn import functional as F
 from basicsr.utils.dist_util import master_only
+from torch import autograd as autograd
 
 def gradient_penalty_loss(discriminator, real_data, fake_data, weight=None):
     """Calculate gradient penalty for wgan-gp.
