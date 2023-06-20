@@ -1,5 +1,5 @@
 # general settings
-name: train_rcgan_esrgan_second_stage
+name: train_rcgan_wgan
 model_type: rcGANESRGAN
 scale: 4
 num_gpu: auto  # auto: can infer from your visible devices automatically. official: 4 GPUs
