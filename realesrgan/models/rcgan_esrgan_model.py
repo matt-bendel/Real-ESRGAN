@@ -327,11 +327,11 @@ class rcGANESRGAN(SRGANModel):
         alpha = torch.rand(batch_size, 1, 1, 1).to(gan_gt.device)
 
         # interpolate between real_data and fake_data
-        interpolates = (alpha * gan_gt.data + (1. - alpha) * self.output[0, :, :, :, :].data).requires_grad_(True)
+        interpolates = alpha * gan_gt + (1. - alpha) * self.output[0, :, :, :, :].detatch()
+        interpolates = autograd.Variable(interpolates, requires_grad=True)
 
         disc_interpolates = self.net_d(interpolates)
-        fake = torch.FloatTensor(disc_interpolates.shape[0], 1).fill_(1.0).to(
-            gan_gt.device)
+        fake = torch.FloatTensor(disc_interpolates.shape[0], 1).fill_(1.0).to(gan_gt.device)
 
         gradients = autograd.grad(
             outputs=disc_interpolates,
@@ -343,7 +343,7 @@ class rcGANESRGAN(SRGANModel):
 
         gradients = gradients.view(gradients.size(0), -1)
         gradients_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean()
-        l_d_gp = 10 * gradients_penalty
+        l_d_gp = 10 * gradients_penalty + interpolates[:, 0, 0, 0].mean()*0
         loss_dict['l_d_gp'] = l_d_gp
         l_d_gp.backward()
 
