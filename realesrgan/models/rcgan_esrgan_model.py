@@ -345,6 +345,7 @@ class rcGANESRGAN(SRGANModel):
         l_d_gp = 10 * ((gradients.norm(2, dim=1) - 1) ** 2).mean() + interpolates[:, 0, 0, 0].mean()*0
         loss_dict['l_d_gp'] = l_d_gp
         l_d_total += l_d_gp
+        l_d_total += 0.001 * torch.mean(real_d_pred ** 2)
         l_d_total.backward()
 
         self.optimizer_d.step()
