@@ -300,7 +300,7 @@ class rcGANESRGAN(SRGANModel):
                     l_g_percep, l_g_style = self.cri_perceptual(self.output[z, :, :, :, :], percep_gt)
                     if l_g_percep is not None:
                         l_g_percept += l_g_percep
-                        loss_dict['l_g_percep'] = 5e-2 * l_g_percep
+                        loss_dict['l_g_percep'] = 1e-3 * l_g_percep
 
                 l_g_total = l_g_percept
                 loss_dict['l_g_percep'] = l_g_percept
