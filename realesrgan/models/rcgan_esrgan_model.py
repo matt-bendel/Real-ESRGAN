@@ -502,7 +502,8 @@ class rcGANESRGAN(SRGANModel):
 
         mu_0 = 2e-2
         self.betastd += mu_0 * ((psnr_1 + 2.5) - psnr_8)
-        self.cri_pix.update_loss_weight(self.betastd)
+        if hasattr(self, 'cri_pix'):
+            self.cri_pix.update_loss_weight(self.betastd)
 
         self._log_validation_metric_values(current_iter, dataset_name, tb_logger)
         self.is_train = True
