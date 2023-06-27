@@ -27,12 +27,12 @@ network_g:
   num_in_ch: 4
   num_out_ch: 3
   num_feat: 64
-  num_block: 23
+  num_block: 16
   num_grow_ch: 32
 
 # path
 path:
-  pretrain_network_g: /home/bendel.8/Git_Repos/sr/Real-ESRGAN/experiments/train_rcgan_esrgan_second_stage/models/net_g_75000.pth
+  pretrain_network_g: /home/bendel.8/Git_Repos/sr/Real-ESRGAN/experiments/train_rcgan_wgan/models/net_g_370000.pth
   strict_load_g: true
 
 # validation settings
