@@ -294,16 +294,17 @@ class rcGANESRGAN(SRGANModel):
                 l_g_total += l_g_pix
                 loss_dict['l_g_pix'] = l_g_pix
 
-            # if self.cri_perceptual:
-            #     l_g_percept = 0
-            #     for z in range(self.output.shape[0]):
-            #         l_g_percep, l_g_style = self.cri_perceptual(self.output, percep_gt)
-            #         if l_g_percep is not None:
-            #             l_g_total += l_g_percep
-            #             loss_dict['l_g_percep'] = l_g_percep
-            #         if l_g_style is not None:
-            #             l_g_total += l_g_style
-            #             loss_dict['l_g_style'] = l_g_style
+            if self.cri_perceptual:
+                l_g_percept = 0
+                for z in range(self.output.shape[0]):
+                    l_g_percep, l_g_style = self.cri_perceptual(self.output[z, :, :, :, :], percep_gt)
+                    if l_g_percep is not None:
+                        l_g_percept += l_g_percep
+                        loss_dict['l_g_percep'] = 5e-2 * l_g_percep
+
+                l_g_total = l_g_percept
+                loss_dict['l_g_percep'] = l_g_percept
+
 
             l_g_gan = 0
             for z in range(self.output.shape[0]):
