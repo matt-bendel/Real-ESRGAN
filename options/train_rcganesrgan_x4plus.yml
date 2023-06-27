@@ -134,21 +134,21 @@ train:
     loss_weight: 1.0
     reduction: mean
   # perceptual loss (content and style losses)
-#  perceptual_opt:
-#    type: PerceptualLoss
-#    layer_weights:
-#      # before relu
-#      'conv1_2': 0.1
-#      'conv2_2': 0.1
-#      'conv3_4': 1
-#      'conv4_4': 1
-#      'conv5_4': 1
-#    vgg_type: vgg19
-#    use_input_norm: true
-#    perceptual_weight: !!float 5e-1
-#    style_weight: 0
-#    range_norm: false
-#    criterion: l1
+  perceptual_opt:
+    type: PerceptualLoss
+    layer_weights:
+      # before relu
+      'conv1_2': 0.1
+      'conv2_2': 0.1
+      'conv3_4': 1
+      'conv4_4': 1
+      'conv5_4': 1
+    vgg_type: vgg19
+    use_input_norm: true
+    perceptual_weight: !!float 5e-1
+    style_weight: 0
+    range_norm: false
+    criterion: l1
   # gan loss
   gan_opt:
     type: GANLoss
@@ -156,7 +156,6 @@ train:
     real_label_val: 1.0
     fake_label_val: 0.0
     loss_weight: !!float 5e-2
-
   net_d_iters: 1
   net_d_init_iters: 0
 
